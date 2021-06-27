@@ -476,10 +476,10 @@
     </configuration>
     <list>
       <item itemvalue="Python.main" />
-      <item itemvalue="Python.main_attribute" />
-      <item itemvalue="Python.test_ODE2" />
-      <item itemvalue="Python.test_ODE" />
       <item itemvalue="Python.utils" />
+      <item itemvalue="Python.test_ODE" />
+      <item itemvalue="Python.test_ODE2" />
+      <item itemvalue="Python.main_attribute" />
     </list>
     <recent_temporary>
       <list>
