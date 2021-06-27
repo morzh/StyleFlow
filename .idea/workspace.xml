@@ -382,6 +382,9 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
     </configuration>
     <configuration name="main_attribute" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="StyleFlow" />
@@ -401,6 +404,9 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
     </configuration>
     <configuration name="test_ODE" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="StyleFlow" />
@@ -420,6 +426,9 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
     </configuration>
     <configuration name="test_ODE2" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="StyleFlow" />
@@ -439,6 +448,9 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
     </configuration>
     <configuration name="utils" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="StyleFlow" />
@@ -458,13 +470,16 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Python.main" />
-      <item itemvalue="Python.utils" />
-      <item itemvalue="Python.test_ODE" />
-      <item itemvalue="Python.test_ODE2" />
       <item itemvalue="Python.main_attribute" />
+      <item itemvalue="Python.test_ODE2" />
+      <item itemvalue="Python.test_ODE" />
+      <item itemvalue="Python.utils" />
     </list>
     <recent_temporary>
       <list>

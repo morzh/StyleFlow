@@ -20,19 +20,20 @@ class RealTimeAttrThread(QThread):
         self.Form = Form
 
 
-    def render(self, attr_index, raw_slide_value, sess):
-        self.sess = sess
+    def render(self, attr_index, raw_slide_value):
+    # def render(self, attr_index, raw_slide_value, sess):
+    #     self.sess = sess
         self.attr_index = attr_index
         self.raw_slide_value = raw_slide_value
         self.start()
 
 
     def run(self):
-        with self.sess.as_default():
-
-
+        try:
             self.Form.real_time_editing(self.attr_index, self.raw_slide_value)
             self.Form.real_scene_update.emit(True)
+        finally:
+            pass
 
 
 

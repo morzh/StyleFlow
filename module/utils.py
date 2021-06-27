@@ -177,7 +177,7 @@ def validate_classification(loaders, model, args):
     tr_label = []
     for data in _make_iter_(train_loader):
         tr_pc = data['train_points']
-        tr_pc = tr_pc.cuda() if args.gpu is None else tr_pc.cuda(args.gpu)
+        tr_pc = tr_pc.cpu() if args.gpu is None else tr_pc.cuda(args.gpu)
         latent = model.encode(tr_pc)
         label = data['cate_idx']
         tr_latent.append(latent.cpu().detach().numpy())
@@ -189,7 +189,7 @@ def validate_classification(loaders, model, args):
     te_label = []
     for data in _make_iter_(test_loader):
         tr_pc = data['train_points']
-        tr_pc = tr_pc.cuda() if args.gpu is None else tr_pc.cuda(args.gpu)
+        tr_pc = tr_pc.cpu() if args.gpu is None else tr_pc.cuda(args.gpu)
         latent = model.encode(tr_pc)
         label = data['cate_idx']
         te_latent.append(latent.cpu().detach().numpy())
@@ -218,8 +218,8 @@ def validate_conditioned(loader, model, args, max_samples=None, save_dir=None):
     for data in iterator:
         # idx_b, tr_pc, te_pc = data[:3]
         idx_b, tr_pc, te_pc = data['idx'], data['train_points'], data['test_points']
-        tr_pc = tr_pc.cuda() if args.gpu is None else tr_pc.cuda(args.gpu)
-        te_pc = te_pc.cuda() if args.gpu is None else te_pc.cuda(args.gpu)
+        tr_pc = tr_pc.cpu() if args.gpu is None else tr_pc.cuda(args.gpu)
+        te_pc = te_pc.cpu() if args.gpu is None else te_pc.cuda(args.gpu)
 
         if tr_pc.size(1) > te_pc.size(1):
             tr_pc = tr_pc[:, :te_pc.size(1), :]
@@ -227,8 +227,8 @@ def validate_conditioned(loader, model, args, max_samples=None, save_dir=None):
 
         # denormalize
         m, s = data['mean'].float(), data['std'].float()
-        m = m.cuda() if args.gpu is None else m.cuda(args.gpu)
-        s = s.cuda() if args.gpu is None else s.cuda(args.gpu)
+        m = m.cpu() if args.gpu is None else m.cuda(args.gpu)
+        s = s.cpu() if args.gpu is None else s.cuda(args.gpu)
         out_pc = out_pc * s + m
         te_pc = te_pc * s + m
 
@@ -272,13 +272,13 @@ def validate_sample(loader, model, args, max_samples=None, save_dir=None):
 
     for data in iterator:
         idx_b, te_pc = data['idx'], data['test_points']
-        te_pc = te_pc.cuda() if args.gpu is None else te_pc.cuda(args.gpu)
+        te_pc = te_pc.cpu() if args.gpu is None else te_pc.cuda(args.gpu)
         _, out_pc = model.sample(te_pc.size(0), te_pc.size(1), gpu=args.gpu)
 
         # denormalize
         m, s = data['mean'].float(), data['std'].float()
-        m = m.cuda() if args.gpu is None else m.cuda(args.gpu)
-        s = s.cuda() if args.gpu is None else s.cuda(args.gpu)
+        m = m.cpu() if args.gpu is None else m.cuda(args.gpu)
+        s = s.cpu() if args.gpu is None else s.cuda(args.gpu)
         out_pc = out_pc * s + m
         te_pc = te_pc * s + m
 
@@ -307,7 +307,7 @@ def validate_sample(loader, model, args, max_samples=None, save_dir=None):
     sample_pcs = sample_pcs.cpu().detach().numpy()
     ref_pcs = ref_pcs.cpu().detach().numpy()
     jsd = JSD(sample_pcs, ref_pcs)
-    jsd = torch.tensor(jsd).cuda() if args.gpu is None else torch.tensor(jsd).cuda(args.gpu)
+    jsd = torch.tensor(jsd).cpu() if args.gpu is None else torch.tensor(jsd).cuda(args.gpu)
     res.update({"JSD": jsd})
     print("JSD     :%s" % jsd)
     return res
