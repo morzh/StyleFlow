@@ -24,7 +24,7 @@ from ui.ui import transfer_real_to_slide, invert_slide_to_real, light_transfer_r
 import torch
 from module.flow import cnf
 import os
-import tensorflow as tf
+# import tensorflow as tf
 
 from ui.real_time_attr_thread import RealTimeAttrThread
 from ui.real_time_light_thread import RealTimeLightThread
@@ -61,7 +61,7 @@ class Ex(Ui_Form):
         # self.keep_indexes = [0]
         self.keep_indexes = np.array(self.keep_indexes).astype(np.int)
 
-        self.zero_padding = torch.zeros(1, 18, 1).cuda()
+        self.zero_padding = torch.zeros(1, 18, 1).cpu()
         self.real_scene_update.connect(self.update_real_scene)
 
         self.attr_order = ['Gender', 'Glasses', 'Yaw', 'Pitch', 'Baldness', 'Beard', 'Age', 'Expression']
@@ -102,13 +102,10 @@ class Ex(Ui_Form):
 
     def init_deep_model(self, opt):
         self.opt = opt
-        self.model = Build_model(self.opt)
-        self.w_avg = self.model.Gs.get_var('dlatent_avg')
-
+        # self.model = Build_model(self.opt)
+        # self.w_avg = self.model.Gs.get_var('dlatent_avg')
         self.prior = cnf(512, '512-512-512-512-512', 17, 1)
-
         self.prior.load_state_dict(torch.load('flow_weight/modellarge10k.pt'))
-
         self.prior.eval()
 
     def init_screen(self):
@@ -147,9 +144,9 @@ class Ex(Ui_Form):
 
         ################################  calculate attributes array first, then change the values of attributes
 
-        self.q_array = torch.from_numpy(self.w_current).cuda().clone().detach()
-        self.array_source = torch.from_numpy(self.attr_current).type(torch.FloatTensor).cuda()
-        self.array_light = torch.from_numpy(self.light_current).type(torch.FloatTensor).cuda()
+        self.q_array = torch.from_numpy(self.w_current).cpu().clone().detach()
+        self.array_source = torch.from_numpy(self.attr_current).type(torch.FloatTensor).cpu()
+        self.array_light = torch.from_numpy(self.light_current).type(torch.FloatTensor).cpu()
         self.pre_lighting_distance = [self.pre_lighting[i] - self.array_light for i in range(len(self.lighting_order))]
 
         self.final_array_source = torch.cat([self.array_light, self.array_source.unsqueeze(0).unsqueeze(-1)], dim=1)
@@ -196,15 +193,11 @@ class Ex(Ui_Form):
         self.his_image.append(qim.copy())
 
     def update_real_scene(self):
-        qim = QImage(self.GAN_image.data, self.GAN_image.shape[1], self.GAN_image.shape[0], self.GAN_image.strides[0],
-                     QImage.Format_RGB888)
-
+        qim = QImage(self.GAN_image.data, self.GAN_image.shape[1], self.GAN_image.shape[0], self.GAN_image.strides[0], QImage.Format_RGB888)
         showedImagePixmap = QPixmap.fromImage(qim)
-
         self.GT_scene.addPixmap(showedImagePixmap)
 
     def show_his_image(self, i):
-
         qim = self.his_image[i]
         showedImagePixmap = QPixmap.fromImage(qim)
         if len(self.lock_scene.items()) > 0:
@@ -215,15 +208,11 @@ class Ex(Ui_Form):
         self.realtime_attr_thread.render(attr_index, raw_slide_value, tf.get_default_session())
 
     def real_time_light_thread(self, light_index, raw_slide_value):
-
         self.realtime_light_thread.render(light_index, raw_slide_value, tf.get_default_session())
 
     def real_time_lighting(self, light_index, raw_slide_value):
-
         if not self.at_intial_point:
-
             real_value = light_invert_slide_to_real(self.lighting_order[light_index], raw_slide_value)
-
             self.light_current_list[light_index] = real_value
 
             ###############################
@@ -243,23 +232,18 @@ class Ex(Ui_Form):
             self.q_array = torch.from_numpy(self.w_current).cuda().clone().detach()
 
             self.fws = self.prior(self.q_array, self.final_array_target, self.zero_padding)
-
             self.GAN_image = self.model.generate_im_from_w_space(self.w_current)[0]
 
         else:
             pass
 
     def real_time_editing(self, attr_index, raw_slide_value):
-
+        print('real_time_editing')
         if not self.at_intial_point:
-
             real_value = invert_slide_to_real(self.attr_order[attr_index], raw_slide_value)
-
             attr_change = real_value - self.attr_current_list[attr_index]
             attr_final = attr_degree_list[attr_index] * attr_change + self.attr_current_list[attr_index]
-
             self.final_array_target[0, attr_index + 9, 0, 0] = attr_final
-
             self.rev = self.prior(self.fws[0], self.final_array_target, self.zero_padding, True)
 
             if attr_index == 0:
@@ -272,8 +256,6 @@ class Ex(Ui_Form):
             elif attr_index == 2:
 
                 self.rev[0][0][4:] = self.q_array[0][4:]
-
-
 
             elif attr_index == 3:
                 self.rev[0][0][4:] = self.q_array[0][4:]
@@ -297,26 +279,22 @@ class Ex(Ui_Form):
             self.q_array = torch.from_numpy(self.w_current).cuda().clone().detach()
 
             self.fws = self.prior(self.q_array, self.final_array_target, self.zero_padding)
-
             self.GAN_image = self.model.generate_im_from_w_space(self.w_current)[0]
+
+            np.save('/home/morzh/work/fws', self.fws[0].detach().numpy())
         else:
             pass
 
     def reset_Wspace(self):
-
         self.update_GT_scene_image()
 
     def init_data_points(self):
-
         self.raw_w = pickle.load(open("data/sg2latents.pickle", "rb"))
-
         self.raw_TSNE = np.load('data/TSNE.npy')
-
         self.raw_attr = np.load('data/attributes.npy')
 
         self.raw_lights2 = np.load('data/light.npy')
         self.raw_lights = self.raw_lights2
-
         self.all_w = np.array(self.raw_w['Latent'])[self.keep_indexes]
         self.all_attr = self.raw_attr[self.keep_indexes]
         self.all_lights = self.raw_lights[self.keep_indexes]
@@ -329,9 +307,7 @@ class Ex(Ui_Form):
         light5 = torch.from_numpy(self.raw_lights2[34]).type(torch.FloatTensor).cuda()
 
         self.pre_lighting = [light0, light1, light2, light3, light4, light5]
-
         self.X_samples = self.raw_TSNE[self.keep_indexes]
-
         self.map = np.ones([1024, 1024, 3], np.uint8) * 255
 
         for point in self.X_samples:

@@ -1,7 +1,7 @@
 import PIL.Image
-import dnnlib
-import dnnlib.tflib as tflib
-import tensorflow as tf
+# import dnnlib
+# import dnnlib.tflib as tflib
+# import tensorflow as tf
 
 
 import PIL.ImageFile
@@ -10,8 +10,8 @@ import scipy.ndimage
 
 import numpy as np
 import PIL.Image
-import dnnlib
-import dnnlib.tflib as tflib
+# import dnnlib
+# import dnnlib.tflib as tflib
 import os
 import re
 import sys

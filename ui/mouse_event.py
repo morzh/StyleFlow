@@ -68,7 +68,7 @@ class GraphicsScene(QGraphicsScene):
         # img_path = self.Form.img_list[self.pickedImageIndex]
 
 
-        self.Form.update_GT_scene_image()
+        self.Form.load_sample()
 
 
 

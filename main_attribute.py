@@ -23,7 +23,7 @@ from ui.ui2 import transfer_real_to_slide, invert_slide_to_real, light_transfer_
 import torch
 from module.flow import cnf
 import os
-import tensorflow as tf
+# import tensorflow as tf
 
 from ui.real_time_attr_thread import RealTimeAttrThread
 from ui.real_time_light_thread import RealTimeLightThread
@@ -59,7 +59,7 @@ class Ex(Ui_Form):
                              599]
         self.keep_indexes = np.array(self.keep_indexes).astype(np.int)
 
-        self.zero_padding = torch.zeros(1, 18, 1).cuda()
+        self.zero_padding = torch.zeros(1, 18, 1).cpu()
         self.real_scene_update.connect(self.update_real_scene)
 
         self.attr_order = ['Gender', 'Glasses', 'Yaw', 'Pitch', 'Baldness', 'Beard', 'Age', 'Expression']
@@ -106,9 +106,9 @@ class Ex(Ui_Form):
         self.init_screen()
 
     def init_deep_model(self, opt):
-        self.opt = opt
-        self.model = Build_model(self.opt)
-        self.w_avg = self.model.Gs.get_var('dlatent_avg')
+        # self.opt = opt
+        # self.model = Build_model(self.opt)
+        # self.w_avg = self.model.Gs.get_var('dlatent_avg')
 
         self.prior = cnf(512, '512-512-512-512-512', 17, 1)
         self.prior.load_state_dict(torch.load('flow_weight/modellarge10k.pt'))
@@ -157,9 +157,9 @@ class Ex(Ui_Form):
 
         ################################  calculate attributes array first, then change the values of attributes
 
-        self.q_array = torch.from_numpy(self.w_current).cuda().clone().detach()
-        self.array_source = torch.from_numpy(self.attr_current).type(torch.FloatTensor).cuda()
-        self.array_light = torch.from_numpy(self.light_current).type(torch.FloatTensor).cuda()
+        self.q_array = torch.from_numpy(self.w_current).cpu().clone().detach()
+        self.array_source = torch.from_numpy(self.attr_current).type(torch.FloatTensor).cpu()
+        self.array_light = torch.from_numpy(self.light_current).type(torch.FloatTensor).cpu()
 
         self.final_array_source = torch.cat([self.array_light, self.array_source.unsqueeze(0).unsqueeze(-1)], dim=1)
         self.final_array_target = torch.cat([self.array_light, self.array_source.unsqueeze(0).unsqueeze(-1)], dim=1)
@@ -294,7 +294,7 @@ class Ex(Ui_Form):
             self.rev[0][0][12:18] = self.q_array[0][12:18]
 
             self.w_current = self.rev[0].detach().cpu().numpy()
-            self.q_array = torch.from_numpy(self.w_current).cuda().clone().detach()
+            self.q_array = torch.from_numpy(self.w_current).cpu().clone().detach()
 
             self.GAN_image = self.model.generate_im_from_w_space(self.w_current)[0]
 
@@ -348,7 +348,7 @@ class Ex(Ui_Form):
                 self.rev[0][0][6:] = self.q_array[0][6:]
 
             self.w_current = self.rev[0].detach().cpu().numpy()
-            self.q_array = torch.from_numpy(self.w_current).cuda().clone().detach()
+            self.q_array = torch.from_numpy(self.w_current).cpu().clone().detach()
 
             self.fws = self.prior(self.q_array, self.final_array_target, self.zero_padding)
             self.GAN_image = self.model.generate_im_from_w_space(self.w_current)[0]

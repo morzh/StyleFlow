@@ -4,7 +4,7 @@ from PyQt5.QtCore import QThread
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import tensorflow as tf
+# import tensorflow as tf
 import PIL
 import datetime
 import os
@@ -13,12 +13,9 @@ import time
 
 
 class RealTimeAttrThread(QThread):
-
-
     def __init__(self, Form):
         super().__init__()
         self.Form = Form
-
 
     def render(self, attr_index, raw_slide_value):
     # def render(self, attr_index, raw_slide_value, sess):
@@ -27,10 +24,9 @@ class RealTimeAttrThread(QThread):
         self.raw_slide_value = raw_slide_value
         self.start()
 
-
     def run(self):
         try:
-            self.Form.real_time_editing(self.attr_index, self.raw_slide_value)
+            self.Form.augment_attributes(self.attr_index, self.raw_slide_value)
             self.Form.real_scene_update.emit(True)
         finally:
             pass

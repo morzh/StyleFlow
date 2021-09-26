@@ -62,8 +62,7 @@ def build_model( input_dim, hidden_dims, context_dim, num_blocks, conditional):
         return cnf
 
     chain = [build_cnf() for _ in range(num_blocks)]
-    bn_layers = [MovingBatchNorm1d(input_dim, bn_lag=0, sync=False)
-                     for _ in range(num_blocks)]
+    bn_layers = [MovingBatchNorm1d(input_dim, bn_lag=0, sync=False) for _ in range(num_blocks)]
     bn_chain = [MovingBatchNorm1d(input_dim, bn_lag=0, sync=False)]
     for a, b in zip(chain, bn_layers):
             bn_chain.append(a)
